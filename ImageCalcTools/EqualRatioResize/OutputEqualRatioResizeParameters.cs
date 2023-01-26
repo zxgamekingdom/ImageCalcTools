@@ -28,4 +28,12 @@ public class OutputEqualRatioResizeParameters
     ///     目标图像高度
     /// </summary>
     public ulong TargetHeight { get; internal set; }
+
+    /// <summary>
+    ///    缩放比例
+    /// <remarks>
+    ///缩放后的值 = 原值 * 比例
+    /// </remarks>
+    /// </summary>
+    public decimal Ratio { get; internal set; }
 }

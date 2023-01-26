@@ -12,7 +12,7 @@ public class InputEqualRatioResizeParameters
     /// </summary>
     public enum Type
     {
-        Width, Height
+        Width = 0, Height = 1
     }
 
     /// <summary>Initializes a new instance of the <see cref="T:System.Object"></see> class.</summary>

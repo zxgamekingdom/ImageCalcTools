@@ -12,56 +12,81 @@ public class UnitTest_InputCropParameters
     {
         const int testCount = 10000;
         {
-            for (var i = 0; i < testCount; i++)
-            {
-                var ints = 生成异常的参数();
-                if (ints.Length != 6 && ints.Any(x => x <= 0) is false)
-                    throw new Exception("生成异常的参数错误");
-                Assert.Throws<ArgumentException>(() => new InputSlidingWindowCropParameters(ints[0], ints[1], ints[2],
-                    ints[3], ints[4], ints[5]));
-            }
+            var enumerable = 生成异常的参数(testCount);
+            foreach (var (w, h, cw, ch, ow, oh) in enumerable)
+                Assert.Throws<ArgumentException>(() => new InputSlidingWindowCropParameters(w, h, cw, ch, ow, oh));
         }
         {
-            for (var i = 0; i < testCount; i++)
+            var enumerable = 生成正常参数(testCount);
+            foreach (var (w, h, cw, ch, ow, oh) in enumerable)
             {
-                var ints = 生成正常参数();
-                if ((ints is [var w, var h, var cw, var ch, var ow, var oh] &&
-                        w >= cw &&
-                        h >= ch &&
-                        cw > ow &&
-                        ch > oh &&
-                        w > 0 &&
-                        h > 0) is false)
-                    throw new Exception("生成正常参数错误");
-                _ = new InputSlidingWindowCropParameters(ints[0], ints[1], ints[2], ints[3], ints[4], ints[5]);
+                var i = new InputSlidingWindowCropParameters(w, h, cw, ch, ow, oh);
+                Assert.Equal(w, i.Width);
+                Assert.Equal(h, i.Height);
+                Assert.Equal(cw, i.CropWidth);
+                Assert.Equal(ch, i.CropHeight);
+                Assert.Equal(ow, i.OverlapWidth);
+                Assert.Equal(oh, i.OverlapHeight);
+                //w>=1
+                Assert.True(i.Width >= 1);
+                //h>=1
+                Assert.True(i.Height >= 1);
+                //cw>=1
+                Assert.True(i.CropWidth >= 1);
+                //ch>=1
+                Assert.True(i.CropHeight >= 1);
+                //ow>=0
+                Assert.True(i.OverlapWidth >= 0);
+                //oh>=0
+                Assert.True(i.OverlapHeight >= 0);
+                //cw<=w
+                Assert.True(i.CropWidth <= i.Width);
+                //ch<=h
+                Assert.True(i.CropHeight <= i.Height);
+                //ow<cw
+                Assert.True(i.OverlapWidth < i.CropWidth);
+                //oh<ch
+                Assert.True(i.OverlapHeight < i.CropHeight);
             }
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ulong[] 生成正常参数()
+    public static (ulong w, ulong h, ulong cw, ulong ch, ulong ow, ulong oh)[] 生成正常参数(ulong testCount)
     {
         var random = Random.Shared;
-        var w = random.Next(2, int.MaxValue);
-        var h = random.Next(2, int.MaxValue);
-        var cw = random.Next(1, w + 1);
-        var ch = random.Next(1, h + 1);
-        var ow = random.Next(0, cw);
-        var oh = random.Next(0, ch);
-        var ints = new[] { w, h, cw, ch, ow, oh };
-        return ints.Select(i => (ulong)i).ToArray();
+        var list = new List<(ulong w, ulong h, ulong cw, ulong ch, ulong ow, ulong oh)>();
+        for (ulong index = 0; index < testCount; index++)
+        {
+            var w = random.Next(2, int.MaxValue);
+            var h = random.Next(2, int.MaxValue);
+            var cw = random.Next(1, w + 1);
+            var ch = random.Next(1, h + 1);
+            var ow = random.Next(0, cw);
+            var oh = random.Next(0, ch);
+            list.Add(((ulong)w, (ulong)h, (ulong)cw, (ulong)ch, (ulong)ow, (ulong)oh));
+        }
+
+        return list.ToArray();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ulong[] 生成异常的参数()
+    public static (ulong w, ulong h, ulong cw, ulong ch, ulong ow, ulong oh)[] 生成异常的参数(ulong testCount)
     {
         var random = Random.Shared;
-        var ints = new ulong[6];
-        for (var i = 0; i < ints.Length; i++)
-            ints[i] = (ulong)random.Next(int.MaxValue);
+        var list = new List<(ulong w, ulong h, ulong cw, ulong ch, ulong ow, ulong oh)>();
+        const int spanLength = 6;
+        Span<ulong> span = stackalloc ulong[spanLength];
+        for (ulong index = 0; index < testCount; index++)
+        {
+            for (var i = 0; i < spanLength; i++)
+                span[i] = (ulong)random.Next(int.MaxValue);
 
-        //ints0-3随机一个为0
-        ints[random.Next(4)] = 0;
-        return ints;
+            //ints0-3随机一个为0
+            span[random.Next(4)] = 0;
+            list.Add((span[0], span[1], span[2], span[3], span[4], span[5]));
+        }
+
+        return list.ToArray();
     }
 }

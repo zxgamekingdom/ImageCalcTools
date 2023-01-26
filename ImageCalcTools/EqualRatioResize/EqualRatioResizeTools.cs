@@ -5,7 +5,7 @@ namespace ImageCalcTools.EqualRatioResize;
 public static class EqualRatioResizeTools
 {
     /// <summary>
-    ///    计算等比缩放参数
+    ///     计算等比缩放参数
     /// </summary>
     /// <param name="inputParameters"></param>
     /// <returns></returns>
@@ -26,7 +26,11 @@ public static class EqualRatioResizeTools
         var targetHeight = (ulong)(h * ratio);
         return new OutputEqualRatioResizeParameters
         {
-            Width = w, Height = h, TargetWidth = targetWidth, TargetHeight = targetHeight
+            Width = w,
+            Height = h,
+            TargetWidth = targetWidth,
+            TargetHeight = targetHeight,
+            Ratio = ratio
         };
     }
 }
