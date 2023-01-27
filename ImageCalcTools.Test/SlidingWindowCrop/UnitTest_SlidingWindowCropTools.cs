@@ -122,7 +122,6 @@ public class UnitTest_SlidingWindowCropTools
 
     //Test_GenSlidingWindowCropRects
     [Fact]
-    [STAThread]
     public void Test_GenSlidingWindowCropRects()
     {
         const ulong testCount = 100;
