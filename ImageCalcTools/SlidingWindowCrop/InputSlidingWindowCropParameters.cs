@@ -22,14 +22,14 @@ public class InputSlidingWindowCropParameters
     }
 
     /// <summary>
-    ///     图片高
-    /// </summary>
-    public ulong Height { get; }
-
-    /// <summary>
     ///     图片宽
     /// </summary>
     public ulong Width { get; }
+
+    /// <summary>
+    ///     图片高
+    /// </summary>
+    public ulong Height { get; }
 
     /// <summary>
     ///     每块小图片的宽度

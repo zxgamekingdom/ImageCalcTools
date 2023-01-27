@@ -1,8 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using ImageCalcTools.EqualRatioResize;
 
 namespace ImageCalcTools.Test.EqualRatioResize;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class UnitTest_InputEqualRatioResizeParameters
 {
     //Test_Ctor

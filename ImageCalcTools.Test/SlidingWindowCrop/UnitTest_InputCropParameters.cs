@@ -5,6 +5,7 @@ using ImageCalcTools.SlidingWindowCrop;
 namespace ImageCalcTools.Test.SlidingWindowCrop;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
+[SuppressMessage("ReSharper", "ConditionIsAlwaysTrueOrFalse")]
 public class UnitTest_InputCropParameters
 {
     [Fact]

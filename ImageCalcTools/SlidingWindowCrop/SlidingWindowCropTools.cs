@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace ImageCalcTools.SlidingWindowCrop;
 
@@ -22,46 +22,60 @@ public static class SlidingWindowCropTools
     {
         checked
         {
-            var w = inputParameters.Width;
-            var h = inputParameters.Height;
-            var cw = inputParameters.CropWidth;
-            var ch = inputParameters.CropHeight;
-            var ow = inputParameters.OverlapWidth;
-            var oh = inputParameters.OverlapHeight;
-            var output =
-                new OutputSlidingWindowCropParameters { Width = w, Height = h, CropWidth = cw, CropHeight = ch };
-            var horizontalCropCount = w / (decimal)cw;
-            var verticalCropCount = h / (decimal)ch;
-            //切割次数向上取整
-            horizontalCropCount = Math.Ceiling(horizontalCropCount);
-            verticalCropCount = Math.Ceiling(verticalCropCount);
-            CALC_HORIZONTAL:
-            //计算重叠部分尺寸
-            var horizontalOverlap = (horizontalCropCount * cw - w) / horizontalCropCount;
-            var verticalOverlap = (verticalCropCount * ch - h) / verticalCropCount;
-            if (horizontalOverlap >= ow)
+            var width = inputParameters.Width;
+            var height = inputParameters.Height;
+            var cropWidth = inputParameters.CropWidth;
+            var cropHeight = inputParameters.CropHeight;
+            var overlapWidth = inputParameters.OverlapWidth;
+            var overlapHeight = inputParameters.OverlapHeight;
+            //w=cw*hbc-ow*(hbc-1)
+            //h=ch*vbc-oh*(vbc-1)
+            //横向块数
+            var hbc = -((decimal)width - overlapWidth) / ((decimal)overlapWidth - cropWidth);
+            //纵向块数
+            var vbc = -((decimal)height - overlapHeight) / ((decimal)overlapHeight - cropHeight);
+            //横向块数向上取整
+            var hCc = (ulong)decimal.Ceiling(hbc);
+            //纵向块数向上取整
+            var vCc = (ulong)decimal.Ceiling(vbc);
+            //横向重叠部分
+            var ow = hCc == 1 ? 0 : ((decimal)cropWidth * hCc - width) / (hCc - 1);
+            //纵向重叠部分
+            var oh = vCc == 1 ? 0 : ((decimal)cropHeight * vCc - height) / (vCc - 1);
+            return new OutputSlidingWindowCropParameters
             {
-            }
-            else
-            {
-                horizontalCropCount++;
-                goto CALC_HORIZONTAL;
-            }
-
-            if (verticalOverlap >= oh)
-            {
-            }
-            else
-            {
-                verticalCropCount++;
-                goto CALC_HORIZONTAL;
-            }
-
-            output.HorizontalCropCount = (ulong)horizontalCropCount;
-            output.VerticalCropCount = (ulong)verticalCropCount;
-            output.OverlapWidth = horizontalOverlap;
-            output.OverlapHeight = verticalOverlap;
-            return output;
+                Height = height,
+                Width = width,
+                CropHeight = cropHeight,
+                CropWidth = cropWidth,
+                OverlapHeight = oh,
+                OverlapWidth = ow,
+                HorizontalBlockCount = hCc - 1,
+                VerticalBlockCount = vCc - 1
+            };
         }
+    }
+
+    public static SlidingWindowCropRect[] GenSlidingWindowCropRects(OutputSlidingWindowCropParameters parameters)
+    {
+        var cw = parameters.CropWidth;
+        var ch = parameters.CropHeight;
+        var ow = parameters.OverlapWidth;
+        var oh = parameters.OverlapHeight;
+        var hc = parameters.HorizontalBlockCount;
+        var vc = parameters.VerticalBlockCount;
+        var total = hc * vc;
+        var rectList = new List<SlidingWindowCropRect>((int)total);
+        for (ulong v = 0; v < vc; v++)
+        for (ulong h = 0; h < hc; h++)
+        {
+            var row = v * (ch - oh);
+            var col = h * (cw - ow);
+            var index = v * hc + h;
+            var rect = new SlidingWindowCropRect(index, v, h, row, col, cw, ch);
+            rectList.Add(rect);
+        }
+
+        return rectList.ToArray();
     }
 }

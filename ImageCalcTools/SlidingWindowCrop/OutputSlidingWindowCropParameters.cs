@@ -41,32 +41,32 @@ public class OutputSlidingWindowCropParameters
     public decimal OverlapHeight { get; internal set; }
 
     /// <summary>
-    ///     横向切割的块数
+    ///     横向裁切次数
     /// </summary>
-    public ulong HorizontalBlockCount => HorizontalCropCount + 1;
+    public ulong HorizontalCropCount => HorizontalBlockCount - 1;
 
     /// <summary>
-    ///     纵向切割的块数
+    ///     纵向裁切次数
     /// </summary>
-    public ulong VerticalBlockCount => VerticalCropCount + 1;
+    public ulong VerticalCropCount => VerticalBlockCount - 1;
 
     /// <summary>
-    ///     横向切割的次数
+    ///     横向块数量
     /// </summary>
-    public ulong HorizontalCropCount { get; internal set; }
+    public ulong HorizontalBlockCount { get; internal set; }
 
     /// <summary>
-    ///     纵向切割的次数
+    ///     纵向块数量
     /// </summary>
-    public ulong VerticalCropCount { get; internal set; }
+    public ulong VerticalBlockCount { get; internal set; }
 
     /// <summary>
     ///     水平滑动的距离
     /// </summary>
-    public decimal HorizontalSlideDistance => CropWidth - OverlapWidth;
+    public decimal HorizontalSlideDistance => HorizontalCropCount == 0 ? 0 : CropWidth - OverlapWidth;
 
     /// <summary>
     ///     垂直滑动的距离
     /// </summary>
-    public decimal VerticalSlideDistance => CropHeight - OverlapHeight;
+    public decimal VerticalSlideDistance => VerticalCropCount == 0 ? 0 : CropHeight - OverlapHeight;
 }

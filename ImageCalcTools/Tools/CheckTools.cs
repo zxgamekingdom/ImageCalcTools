@@ -53,4 +53,10 @@ public static class CheckTools
         if (value1 <= value2)
             throw new ArgumentException($"{name1}必须大于{name2}");
     }
+
+    public static void MustGreaterThanOrEqualZero(decimal value, string name)
+    {
+        if (value < 0)
+            throw new ArgumentException($"{name}必须大于等于0");
+    }
 }
