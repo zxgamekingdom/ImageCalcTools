@@ -22,36 +22,36 @@ public static class SlidingWindowCropTools
     {
         checked
         {
-            var width = inputParameters.Width;
-            var height = inputParameters.Height;
-            var cropWidth = inputParameters.CropWidth;
-            var cropHeight = inputParameters.CropHeight;
-            var overlapWidth = inputParameters.OverlapWidth;
-            var overlapHeight = inputParameters.OverlapHeight;
+            decimal width = inputParameters.Width;
+            decimal height = inputParameters.Height;
+            decimal cropWidth = inputParameters.CropWidth;
+            decimal cropHeight = inputParameters.CropHeight;
+            decimal overlapWidth = inputParameters.OverlapWidth;
+            decimal overlapHeight = inputParameters.OverlapHeight;
             //w=cw*hbc-ow*(hbc-1)
             //h=ch*vbc-oh*(vbc-1)
             //横向块数
-            var hbc = -((decimal)width - overlapWidth) / ((decimal)overlapWidth - cropWidth);
+            var hbc = -(width - overlapWidth) / (overlapWidth - cropWidth);
             //纵向块数
-            var vbc = -((decimal)height - overlapHeight) / ((decimal)overlapHeight - cropHeight);
+            var vbc = -(height - overlapHeight) / (overlapHeight - cropHeight);
             //横向块数向上取整
             var hCc = (ulong)decimal.Ceiling(hbc);
             //纵向块数向上取整
             var vCc = (ulong)decimal.Ceiling(vbc);
             //横向重叠部分
-            var ow = hCc == 1 ? 0 : ((decimal)cropWidth * hCc - width) / (hCc - 1);
+            var ow = hCc == 1 ? 0 : (cropWidth * hCc - width) / (hCc - 1);
             //纵向重叠部分
-            var oh = vCc == 1 ? 0 : ((decimal)cropHeight * vCc - height) / (vCc - 1);
+            var oh = vCc == 1 ? 0 : (cropHeight * vCc - height) / (vCc - 1);
             return new OutputSlidingWindowCropParameters
             {
-                Height = height,
-                Width = width,
-                CropHeight = cropHeight,
-                CropWidth = cropWidth,
+                Height = (ulong)height,
+                Width = (ulong)width,
+                CropHeight = (ulong)cropHeight,
+                CropWidth = (ulong)cropWidth,
                 OverlapHeight = oh,
                 OverlapWidth = ow,
-                HorizontalBlockCount = hCc - 1,
-                VerticalBlockCount = vCc - 1
+                HorizontalBlockCount = hCc,
+                VerticalBlockCount = vCc
             };
         }
     }
@@ -60,17 +60,17 @@ public static class SlidingWindowCropTools
     {
         var cw = parameters.CropWidth;
         var ch = parameters.CropHeight;
-        var ow = parameters.OverlapWidth;
-        var oh = parameters.OverlapHeight;
         var hc = parameters.HorizontalBlockCount;
         var vc = parameters.VerticalBlockCount;
+        var hsd = parameters.HorizontalSlideDistance;
+        var vsd = parameters.VerticalSlideDistance;
         var total = hc * vc;
         var rectList = new List<SlidingWindowCropRect>((int)total);
         for (ulong v = 0; v < vc; v++)
         for (ulong h = 0; h < hc; h++)
         {
-            var row = v * (ch - oh);
-            var col = h * (cw - ow);
+            var row = v * vsd;
+            var col = h * hsd;
             var index = v * hc + h;
             var rect = new SlidingWindowCropRect(index, v, h, row, col, cw, ch);
             rectList.Add(rect);
