@@ -3,5 +3,11 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
+		<PackageId>ImageCalcTools</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>Taurus Zhou</Authors>
+		<Company>Taurus Zhou</Company>
+		<PackageDescription>对图片进行分割缩放处理的工具类</PackageDescription>
+		<RepositoryUrl>https://github.com/zxgamekingdom/ImageCalcTools</RepositoryUrl>
 	</PropertyGroup>
 </Project>
